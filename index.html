@@ -14,9 +14,8 @@
             font-family: Arial, sans-serif;
         }
 
-        /* 좌측 사이드바 스타일 */
         #sidebar {
-            width: 25%; /* 화면의 25% */
+            width: 25%;
             background-color: #f4f4f4;
             border-right: 1px solid #ddd;
             padding: 10px;
@@ -24,9 +23,8 @@
             overflow-y: auto;
         }
 
-        /* 지도 영역 스타일 */
         #map-container {
-            width: 75%; /* 화면의 75% */
+            width: 75%;
             height: 100%;
             position: relative;
         }
@@ -42,31 +40,55 @@
 </head>
 <body>
     <div id="sidebar">
-        <h2>Menu</h2>
-        <p>Welcome to the water-map project!</p>
-        <ul>
-            <li>Menu Item 1</li>
-            <li>Menu Item 2</li>
-            <li>Menu Item 3</li>
-        </ul>
+        <h2>Rainfall Data</h2>
+        <ul id="locationList"></ul>
     </div>
     <div id="map-container">
         <div id="map"></div>
     </div>
-
     <script>
+        const rainfallData = [
+            { location: "서울 시청", latitude: 37.5665, longitude: 126.9780, rainfall: 12.5 },
+            { location: "강남역", latitude: 37.4979, longitude: 127.0276, rainfall: 20.1 }
+        ];
+
+        let map;
+
         function initMap() {
-            const location = { lat: 37.5665, lng: 126.9780 }; // 서울 좌표
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 10,
-                center: location,
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: { lat: 37.5665, lng: 126.9780 },
             });
-            new google.maps.Marker({
-                position: location,
-                map: map,
-                title: "서울 위치",
+
+            const locationList = document.getElementById("locationList");
+
+            rainfallData.forEach((data) => {
+                const marker = new google.maps.Marker({
+                    position: { lat: data.latitude, lng: data.longitude },
+                    map: map,
+                    title: data.location,
+                });
+
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `<h3>${data.location}</h3><p>Rainfall: ${data.rainfall} mm</p>`,
+                });
+
+                marker.addListener("click", () => {
+                    infoWindow.open(map, marker);
+                });
+
+                const listItem = document.createElement("li");
+                listItem.textContent = `${data.location} (${data.rainfall} mm)`;
+                listItem.style.cursor = "pointer";
+                listItem.onclick = () => {
+                    map.setCenter(marker.getPosition());
+                    infoWindow.open(map, marker);
+                };
+
+                locationList.appendChild(listItem);
             });
         }
+
         window.onload = initMap;
     </script>
 </body>
