@@ -7,11 +7,44 @@
     <title>water-map</title>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlzpUDuvejHkqi6C6_rJJMJni-mnZqIN8"></script>
     <style>
-        html, body {
-            height: 100%;
+        body {
             margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
         }
+
+        /* 사이드바 스타일 */
+        #sidebar {
+            width: 250px;
+            background-color: #f4f4f4;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            padding: 15px;
+            transition: width 0.3s ease;
+        }
+
+        #sidebar.hidden {
+            width: 50px;
+        }
+
+        #sidebar button {
+            display: block;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        /* 지도 영역 스타일 */
+        #map-container {
+            flex-grow: 1;
+            position: relative;
+        }
+
         #map {
             position: absolute;
             top: 0;
@@ -22,10 +55,19 @@
     </style>
 </head>
 <body>
-    <div id="map"></div>
+    <div id="sidebar">
+        <button onclick="toggleSidebar()">Toggle Menu</button>
+        <p>Menu Item 1</p>
+        <p>Menu Item 2</p>
+        <p>Menu Item 3</p>
+    </div>
+    <div id="map-container">
+        <div id="map"></div>
+    </div>
+
     <script>
         function initMap() {
-            const location = { lat: 37.5665, lng: 126.9780 };
+            const location = { lat: 37.5665, lng: 126.9780 }; // 서울 좌표
             const map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 10,
                 center: location,
@@ -36,6 +78,12 @@
                 title: "서울 위치",
             });
         }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('hidden');
+        }
+
         window.onload = initMap;
     </script>
 </body>
