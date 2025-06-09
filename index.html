@@ -1,108 +1,51 @@
-
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>water-map</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlzpUDuvejHkqi6C6_rJJMJni-mnZqIN8"></script>
+<html>
+  <head>
+    <title>Map Click Message</title>
+    <meta charset="utf-8" />
     <style>
-        body {
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-        }
-
-        /* 좌측 사이드바 스타일 */
-        #sidebar {
-            width: 25%; /* 화면의 25% */
-            background-color: #f4f4f4;
-            border-right: 1px solid #ddd;
-            padding: 10px;
-            box-sizing: border-box;
-            overflow-y: auto;
-        }
-
-        /* 지도 영역 스타일 */
-        #map-container {
-            width: 75%; /* 화면의 75% */
-            height: 100%;
-            position: relative;
-        }
-
-        #map {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
     </style>
-</head>
-<body>
-    <div id="sidebar">
-        <h2>Rainfall Data</h2>
-        <ul id="locationList"></ul>
-    </div>
-    <div id="map-container">
-        <div id="map"></div>
-    </div>
+  </head>
+  <body>
+    <div id="map"></div>
 
     <script>
-        const rainfallData = [
-            { location: "서울 시청", latitude: 37.5665, longitude: 126.9780, rainfall: 12.5 },
-            { location: "강남역", latitude: 37.4979, longitude: 127.0276, rainfall: 20.1 },
-            { location: "용산역", latitude: 37.5296, longitude: 126.9643, rainfall: 15.0 },
-            { location: "서울역", latitude: 37.5547, longitude: 126.9706, rainfall: 18.0 },
-            { location: "홍대입구", latitude: 37.5566, longitude: 126.9231, rainfall: 14.8 },
-            { location: "신촌", latitude: 37.5597, longitude: 126.9425, rainfall: 16.2 },
-            { location: "연신내", latitude: 37.6190, longitude: 126.9219, rainfall: 13.5 },
-            { location: "건대입구", latitude: 37.5405, longitude: 127.0704, rainfall: 17.0 },
-            { location: "잠실", latitude: 37.5139, longitude: 127.1020, rainfall: 19.0 },
-            { location: "왕십리", latitude: 37.5611, longitude: 127.0377, rainfall: 15.5 }
-            // (90개 이상의 데이터 추가 가능)
-        ];
+      let map;
 
-        function initMap() {
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 12,
-                center: { lat: 37.5665, lng: 126.9780 },
+      function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: 37.5665, lng: 126.9780 },
+          zoom: 12,
+        });
+
+        map.addListener("click", (e) => {
+          const message = prompt("메시지를 입력하세요:");
+          if (message) {
+            const marker = new google.maps.Marker({
+              position: e.latLng,
+              map,
             });
 
-            const locationList = document.getElementById("locationList");
-
-            rainfallData.forEach(data => {
-                // 지도에 마커 추가
-                const marker = new google.maps.Marker({
-                    position: { lat: data.latitude, lng: data.longitude },
-                    map: map,
-                    title: data.location
-                });
-
-                // 정보창 추가
-                const infoWindow = new google.maps.InfoWindow({
-                    content: `<h3>${data.location}</h3><p>Rainfall: ${data.rainfall} mm</p>`
-                });
-
-                marker.addListener("click", () => {
-                    infoWindow.open(map, marker);
-                });
-
-                // 사이드바에 위치 추가
-                const listItem = document.createElement("li");
-                listItem.textContent = `${data.location} (${data.rainfall} mm)`;
-                listItem.style.cursor = "pointer";
-                listItem.onclick = () => {
-                    map.setCenter(marker.getPosition());
-                    infoWindow.open(map, marker);
-                };
-
-                locationList.appendChild(listItem);
+            const infowindow = new google.maps.InfoWindow({
+              content: `<div>${message}</div>`,
             });
-        }
 
-        window.onload = initMap;
+            marker.addListener("click", () => {
+              infowindow.open(map, marker);
+            });
+          }
+        });
+      }
     </script>
-</body>
+    <script
+      async
+      defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlzpUDuvejHkqi6C6_rJJMJni-mnZqIN8&callback=initMap"
+    ></script>
+  </body>
 </html>
